@@ -22,8 +22,12 @@ public class CameraInterface {
     private Camera mCamera;
     private Camera.Parameters mParams;
     private boolean isPreviewing = false;
+    private boolean isFaceDetected = false;
     private float mPreviwRate = -1f;
     private static CameraInterface mCameraInterface;
+
+    //
+    private Camera.AutoFocusCallback myAutoFocusCallback = null;
 
     public interface CamOpenOverCallback{
         public void cameraHasOpened();
@@ -45,6 +49,28 @@ public class CameraInterface {
         Log.i(TAG, "Camera open....");
         mCamera = Camera.open();
         Log.i(TAG, "Camera open over....");
+
+        myAutoFocusCallback = new Camera.AutoFocusCallback() {
+
+            public void onAutoFocus(boolean success, Camera camera) {
+                // TODO Auto-generated method stub
+                if(success)//success表示对焦成功
+                {
+                    Log.i(TAG, "myAutoFocusCallback: 成功...");
+                    //myCamera.setOneShotPreviewCallback(null);
+
+                }
+                else
+                {
+                    //未对焦成功
+                    Log.i(TAG, "myAutoFocusCallback: 失败了...");
+
+                }
+
+
+            }
+        };
+
         callback.cameraHasOpened();
     }
     /**开启预览
@@ -69,16 +95,23 @@ public class CameraInterface {
             mParams.setPictureSize(pictureSize.width, pictureSize.height);
             Size previewSize = CamParaUtil.getInstance().getPropPreviewSize(
                     mParams.getSupportedPreviewSizes(), previewRate, 800);
-            mParams.setPreviewSize(previewSize.width, previewSize.height);
 
+            mParams.setPreviewSize(previewSize.width, previewSize.height);
             mCamera.setDisplayOrientation(90);
 
             CamParaUtil.getInstance().printSupportFocusMode(mParams);
             List<String> focusModes = mParams.getSupportedFocusModes();
-            if(focusModes.contains("continuous-video")){
-                mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+//            if(focusModes.contains("continuous-video")){
+//                mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+//            }
+
+            if(focusModes.contains("auto")){
+                mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             }
+
             mCamera.setParameters(mParams);
+
+
 
             try {
                 mCamera.setPreviewDisplay(holder);
@@ -112,11 +145,31 @@ public class CameraInterface {
             mCamera = null;
         }
     }
+
+    /**
+     * 聚焦
+     */
+    public void doFocus(){
+        if(isPreviewing && (mCamera != null)){
+            mCamera.autoFocus(myAutoFocusCallback);
+//            if (!isFaceDetected){
+//
+//                isFaceDetected = true;
+//                mCamera.startFaceDetection();
+//
+//            }
+//            else
+//                isFaceDetected = false;
+
+        }
+    }
+
     /**
      * 拍照
      */
     public void doTakePicture(){
         if(isPreviewing && (mCamera != null)){
+            mCamera.autoFocus(myAutoFocusCallback);
             mCamera.takePicture(mShutterCallback, null, mJpegPictureCallback);
         }
     }

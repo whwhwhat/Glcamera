@@ -5,13 +5,14 @@
     tools:context=".CameraActivity">
 
     <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <com.example.asus.camera.preview.CameraSurfaceView
             android:id="@+id/camera_surfaceview"
-            android:layout_width="0dip"
-            android:layout_height="0dip" />
+            android:layout_width="240dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center_horizontal|top"/>
     </FrameLayout>
 
     <ImageButton

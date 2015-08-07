@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,12 +18,19 @@ import com.example.asus.util.DisplayUtil;
 
 public class CameraActivity extends Activity implements CameraInterface.CamOpenOverCallback {
     private static final String TAG = "yanzi";
+
+
+    //CameraSurfaceView surfaceView;
     CameraSurfaceView surfaceView = null;
     ImageButton shutterBtn;
     float previewRate = -1f;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        setContentView(R.layout.activity_camera);
+//        initUI();
+//        initViewParams();
         Thread openThread = new Thread(){
             @Override
             public void run() {
@@ -31,6 +39,7 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
             }
         };
         openThread.start();
+
         setContentView(R.layout.activity_camera);
         initUI();
         initViewParams();
@@ -57,12 +66,28 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
         previewRate = DisplayUtil.getScreenRate(this); //默认全屏的比例预览
         surfaceView.setLayoutParams(params);
 
+        //
+
         //手动设置拍照ImageButton的大小为120dip×120dip,原图片大小是64×64
         LayoutParams p2 = shutterBtn.getLayoutParams();
         p2.width = DisplayUtil.dip2px(this, 80);
         p2.height = DisplayUtil.dip2px(this, 80);;
         shutterBtn.setLayoutParams(p2);
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        CameraInterface.getInstance().doFocus();
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onStop() {
+
+        CameraInterface.getInstance().doStopCamera();
+        super.onStop();
     }
 
     @Override
