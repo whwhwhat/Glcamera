@@ -10,9 +10,14 @@
 
         <com.example.asus.camera.preview.CameraSurfaceView
             android:id="@+id/camera_surfaceview"
-            android:layout_width="240dp"
-            android:layout_height="300dp"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
             android:layout_gravity="center_horizontal|top"/>
+        <com.example.asus.camera.preview.CameraSurfaceView
+            android:id="@+id/camera_modified_surfaceview"
+            android:layout_width="240dp"
+            android:layout_height="320dp"
+            android:layout_gravity="center_horizontal|bottom"/>
     </FrameLayout>
 
     <ImageButton
